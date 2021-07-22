@@ -1,0 +1,29 @@
+pipeline {
+
+  agent any
+
+  stages {
+
+    stage('Build') {
+      steps {
+        git url:'https://gitlab.com/krashnat922/myKubernets.git', branch:'main'
+      }
+    }
+  
+    stage('Deploy Nginx') {
+      steps {
+        script {
+          kubernetesDeploy(configs: "nginx.yaml", kubeconfigId: "kubeconfig")
+        }
+      }
+      post {
+                success{
+                    emailext body: 'Nginx kubernetes Deployment is successul using Jenkinsfile', recipientProviders: [developers()], subject: 'kubernetesjenkinsfile', to: 'krishna.tapdiya@afourtech.com'
+                }
+            }
+
+
+    }
+  }
+
+}
